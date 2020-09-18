@@ -1,3 +1,5 @@
+package licensedetector
+
 import java.io.File
 
 /**
@@ -44,7 +46,7 @@ class LicenseDetector (private val projectPathString: String) {
     /**
      * try to find a license in a particular file.
      */
-    private fun tryFindLicense(file: File): ILicenseInfo{
+    private fun tryFindLicense(file: File): ILicenseInfo {
         val fullText = file.readText()
 
         when {

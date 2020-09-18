@@ -1,9 +1,9 @@
 package test
 
-import LicenseDetector
-import LicenseInfo
-import LicenseType
-import NullLicenseInfo
+import licensedetector.LicenseDetector
+import licensedetector.LicenseInfo
+import licensedetector.LicenseType
+import licensedetector.NullLicenseInfo
 import junit.framework.Assert.*
 import org.junit.Test
 import java.nio.file.Paths

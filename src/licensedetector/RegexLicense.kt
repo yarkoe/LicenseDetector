@@ -1,3 +1,5 @@
+package licensedetector
+
 data class RegexLicense(val licenseType: LicenseType, val regex: Regex)
 
 const val apache2Text = """

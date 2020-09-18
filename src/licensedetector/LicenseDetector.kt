@@ -65,14 +65,14 @@ class LicenseDetector (private val projectPathString: String) {
         val headerText = readHeaderText(file)
 
         return when {
-            headerText.startsWith("\\/\\*") -> {
-                val purifiedHeaderText = headerText.removePrefix("\\/\\*")
-                        .split("\\*\\/")[0]
+            headerText.startsWith("/*") -> {
+                val purifiedHeaderText = headerText.removePrefix("/*")
+                        .split("*/")[0]
                         .replace("*", "")
 
                 tryFindLicenseInText(purifiedHeaderText, file.absolutePath)
             }
-            headerText.startsWith("^\"\"\"") -> {
+            headerText.startsWith("\"\"\"") -> {
                 val purifiedHeaderText = headerText.removePrefix("\"\"\"").split("\"\"\"")[0]
 
                 tryFindLicenseInText(purifiedHeaderText, file.absolutePath)

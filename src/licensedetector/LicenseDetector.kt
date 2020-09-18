@@ -1,6 +1,7 @@
 package licensedetector
 
 import java.io.File
+import java.nio.charset.Charset
 
 /**
  * This class is used for license detection.
@@ -8,8 +9,10 @@ import java.io.File
  */
 class LicenseDetector (private val projectPathString: String) {
 
-    private val slashCommentRegex = Regex("^\\/\\*((.|\\s)+)\\*\\/")
-    private val tripleQuotesCommentRegex = Regex("^\"\"\"((.|\\s)+)\"\"\"")
+    companion object {
+        private const val HEADER_MAX_SIZE = 32 * 1024
+    }
+
 
     private val regexLicenseList = listOf(
             RegexLicense(LicenseType.Apache_2_0, licenseTextToRegex(apache2Text)),
@@ -44,27 +47,37 @@ class LicenseDetector (private val projectPathString: String) {
     }
 
     /**
+     * read header specific size.
+     */
+    private fun readHeaderText(file: File): String {
+        val stream = file.inputStream()
+        val bytes = ByteArray(HEADER_MAX_SIZE)
+        stream.read(bytes)
+        stream.close()
+
+        return bytes.toString(Charset.defaultCharset()).split('\u0000')[0]
+    }
+
+    /**
      * try to find a license in a particular file.
      */
     private fun tryFindLicense(file: File): ILicenseInfo {
-        val fullText = file.readText()
+        val headerText = readHeaderText(file)
 
-        when {
-            slashCommentRegex.containsMatchIn(fullText) -> {
-                val matchResult = slashCommentRegex.find(fullText)
+        return when {
+            headerText.startsWith("\\/\\*") -> {
+                val purifiedHeaderText = headerText.removePrefix("\\/\\*")
+                        .split("\\*\\/")[0]
+                        .replace("*", "")
 
-                val mainText = matchResult!!.groupValues[1].replace("*", "")
-
-                return tryFindLicenseInText(mainText, file.absolutePath)
+                tryFindLicenseInText(purifiedHeaderText, file.absolutePath)
             }
-            tripleQuotesCommentRegex.containsMatchIn(fullText) -> {
-                val matchResult = tripleQuotesCommentRegex.find(fullText)
+            headerText.startsWith("^\"\"\"") -> {
+                val purifiedHeaderText = headerText.removePrefix("\"\"\"").split("\"\"\"")[0]
 
-                val mainText = matchResult!!.groupValues[1]
-
-                return tryFindLicenseInText(mainText, file.absolutePath)
+                tryFindLicenseInText(purifiedHeaderText, file.absolutePath)
             }
-            else -> return tryFindLicenseInText(fullText, file.absolutePath)
+            else -> tryFindLicenseInText(headerText, file.absolutePath)
         }
     }
 

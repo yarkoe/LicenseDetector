@@ -6,8 +6,9 @@ import licensedetector.LicenseType
 import licensedetector.NullLicenseInfo
 import org.junit.jupiter.api.Test
 import java.nio.file.Paths
-import kotlin.test.assertEquals
-import kotlin.test.assertFalse
+import org.junit.jupiter.api.Assertions.assertEquals
+import org.junit.jupiter.api.Assertions.assertFalse
+
 
 class LicenseDetectorTest {
 

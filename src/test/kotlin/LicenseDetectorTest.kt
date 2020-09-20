@@ -4,15 +4,16 @@ import licensedetector.LicenseDetector
 import licensedetector.LicenseInfo
 import licensedetector.LicenseType
 import licensedetector.NullLicenseInfo
-import junit.framework.Assert.*
-import org.junit.Test
+import org.junit.jupiter.api.Test
 import java.nio.file.Paths
+import kotlin.test.assertEquals
+import kotlin.test.assertFalse
 
 class LicenseDetectorTest {
 
     @Test
     fun testLicenseDetectorSimple() {
-        val licenseDetector = LicenseDetector(Paths.get("src/").toAbsolutePath().toString() + "/test/TestProject")
+        val licenseDetector = LicenseDetector(Paths.get("src\\test\\TestProject").toAbsolutePath().toString())
 
         val actualMainLicenseType = LicenseType.LGPL_3_0
         val actualLicenseTypes = listOf(
